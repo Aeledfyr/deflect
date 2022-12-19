@@ -11,6 +11,7 @@ mod function;
 mod iter;
 mod pointer;
 mod slice_impl;
+mod cursed_slice_impl;
 mod str_impl;
 mod r#struct;
 mod variant;
@@ -27,6 +28,7 @@ pub use r#box::Box;
 pub use r#enum::Enum;
 pub use r#struct::Struct;
 pub use slice_impl::Slice;
+pub use cursed_slice_impl::SlicePointer;
 pub use str_impl::str;
 pub use variant::Variant;
 

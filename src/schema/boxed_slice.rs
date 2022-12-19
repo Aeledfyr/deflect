@@ -101,6 +101,7 @@ where
     R: crate::gimli::Reader<Offset = usize>,
 {
     fn fmt(&self, _f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        todo!()
+        // TODO
+        Ok(())
     }
 }

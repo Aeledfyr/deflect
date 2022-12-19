@@ -37,8 +37,6 @@ where
 {
     /// The reflected value behind this reference.
     pub fn deref(&self) -> Result<super::Value<'value, 'dwarf, P>, crate::Error>
-    where
-        K: crate::schema::Reference,
     {
         let value = unsafe { *(self.value.as_ptr() as *const *const crate::Byte) };
         let r#type = self.schema.r#type()?;
@@ -47,6 +45,34 @@ where
         let value = std::ptr::slice_from_raw_parts(value, size);
         let value = unsafe { &*value };
         unsafe { super::Value::with_type(r#type, value, self.provider) }
+    }
+}
+
+impl<'value, 'dwarf, K, P> Pointer<'value, 'dwarf, K, P>
+where
+    P: crate::DebugInfoProvider,
+    K: Clone
+{
+    /// The reflected value behind this reference.
+    pub unsafe fn deref_raw_ptr(&self) -> Result<super::Value<'value, 'dwarf, P>, crate::Error>
+    {
+        let value = unsafe { *(self.value.as_ptr() as *const *const crate::Byte) };
+        let r#type = self.schema.r#type()?;
+        let size = r#type.size()?;
+        let size = size.try_into()?;
+        let value = std::ptr::slice_from_raw_parts(value, size);
+        let value = unsafe { &*value };
+        unsafe { super::Value::with_type(r#type, value, self.provider) }
+    }
+    /// Don't use this
+    pub unsafe fn slice_from_raw_parts(&self, length: usize) -> Result<super::SlicePointer<'value, 'dwarf, K, P>, crate::Error>
+    {
+        Ok(super::SlicePointer {
+            schema: self.schema.clone(),
+            value: self.deref_raw()?,
+            provider: self.provider,
+            length,
+        })
     }
 }
 
